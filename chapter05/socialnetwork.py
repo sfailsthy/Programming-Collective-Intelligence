@@ -1,4 +1,6 @@
+# -*- coding=utf8 -*-
 import math
+from optimization import *
 
 people=['Charlie','Augustus','Veruca','Violet','Mike','Joe','Willy','Miranda']
 
@@ -55,4 +57,28 @@ def crosscount(v):
                 
     return total
 
+
+from PIL import Image,ImageDraw
+
+def drawnetwork(sol):
+    #建立image对象
+    img=Image.new('RGB',(400,400),(255,255,255))
+    draw=ImageDraw.Draw(img)
+
+    #建立标示位置信息的字典
+    pos=dict([(people[i],(sol[i*2],sol[i*2+1])) for i in range(0,len(people))])
+    #绘制连线
+    for (a,b) in links:
+        draw.line((pos[a],pos[b]),fill=(255,0,0))
+    #绘制代表人的结点
+    for n,p in pos.items():
+        draw.text(p,n,(0,0,0))
+    img.show()
+
 domain=[(10,370)]*(len(people)*2)
+sol=randomoptimize(domain,crosscount)
+print crosscount(sol)
+sol=annealingoptimize(domain,crosscount,step=50,cool=0.99)
+print crosscount(sol)
+print sol
+drawnetwork(sol)
